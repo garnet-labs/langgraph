@@ -24,6 +24,10 @@ jobs:
     name: "test #${{ matrix.python-version }}"
     steps:
       - uses: actions/checkout@v6
+      - name: Garnet Runtime Review
+        uses: garnet-org/action@245ad6be82de3200c205109c8ca7ac816dc692ea # v2.3.0
+        with:
+          api_token: ${{ secrets.GARNET_API_TOKEN }}
       - name: Set up Python ${{ matrix.python-version }}
         uses: ./.github/actions/uv_setup
         with:
