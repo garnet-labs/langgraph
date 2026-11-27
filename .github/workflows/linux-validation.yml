@@ -1,0 +1,34 @@
+name: Linux validation
+
+on:
+  push:
+    branches: [ci-linux-validation]
+
+permissions: {}
+
+jobs:
+  validation:
+    permissions:
+      contents: read
+      id-token: write
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: "actions/checkout@v6"
+        with:
+          persist-credentials: false
+      - uses: "garnet-org/action@v2.6.0"
+      - uses: "actions/setup-python@v6"
+        with:
+          python-version: "3.13"
+      - uses: "astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7"
+        with:
+          enable-cache: false
+      - name: "Install dependencies"
+        run: |
+          uv sync --frozen --group test --no-dev
+        working-directory: "libs/langgraph"
+      - name: "Run checks"
+        run: |
+          make test NO_DOCKER=true TEST="tests/test_algo.py tests/test_channels.py tests/test_messages_state.py"
+        working-directory: "libs/langgraph"
